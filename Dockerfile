@@ -1,6 +1,6 @@
-FROM kjbreil/arch-base:2017.01.09
+FROM kjbreil/arch-base
 MAINTAINER kjbreil
-RUN pacman -S --needed --noconfirm ruby openssh base-devel musl vim-minimal \
-	tree nano git unrar unzip   
+RUN pacman -S --needed --noconfirm ruby openssh base-devel musl vim-minimal arch-install-scripts \
+	tree nano git unrar unzip coreutils findutils  
 WORKDIR /opt/build
 CMD ["make", "inside"]
