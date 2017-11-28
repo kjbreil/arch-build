@@ -10,18 +10,18 @@ ROOTFS=/arch-root
 
 .PHONY: image push push_latest shell run start stop rm release
 
+
+default: no-cache release
+
 image:
+	docker build -t $(NS)/$(REPO) -t $(NS)/$(REPO) -t $(NS)/$(REPO):$(VERSION) .
+
+no-cache:
 	docker build --no-cache -t $(NS)/$(REPO) -t $(NS)/$(REPO) -t $(NS)/$(REPO):$(VERSION) .
 
 push:
 	docker push $(NS)/$(REPO):$(VERSION)
 	docker push $(NS)/$(REPO):latest
-
-heim:
-	docker tag $(NS)/$(REPO):$(VERSION) heimdall.norgenet.net:5000/$(REPO):$(VERSION)
-	docker tag $(NS)/$(REPO):$(VERSION) heimdall.norgenet.net:5000/$(REPO)
-	docker push heimdall.norgenet.net:5000/$(REPO):$(VERSION)
-	docker push heimdall.norgenet.net:5000/$(REPO)
 
 shell:
 	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) /bin/bash
@@ -38,12 +38,4 @@ stop:
 rm:
 	docker rm $(NAME)-$(INSTANCE)
 
-default: image
-
 release: image push
-
-inside:
-	mkdir -p $(ROOTFS)
-	pacstrap -c -d -G $(ROOTFS) $(PKGS)
-	rm -f root.tar.xz root.tar
-	tar --numeric-owner --xattrs --acls -C "$(ROOTFS)" -c . | xz -f -vvv -9 -e --lzma2=dict=128MiB > root.tar.xz
