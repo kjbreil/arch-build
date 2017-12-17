@@ -4,4 +4,5 @@ RUN pacman -S --needed --noconfirm ruby openssh base-devel musl vim-minimal arch
 	tree nano git unrar unzip coreutils findutils jshon go nodejs && \
 	pacman -Scc
 WORKDIR /opt/build
+VOLUME /opt/build
 CMD ["make", "inside"]
